@@ -105,24 +105,25 @@ TreeNode* BinaryTree::Find(int a_nValue)
 
 bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& ppOutParent)
 {
+	//Making the node equal the parents location.
 	node = ppOutParent;
-	parent = nullptr;
+	parent = nullptr;//Parent is equal to nullptr
 	while (node != nullptr)
 	{
-		if (a_nSearchValue == node->GetData())
+		if (a_nSearchValue == node->GetData())//Data is equal to the nodes data.
 		{
-			ppOutNode = node;
-			ppOutParent = parent;
-			return true;
+			ppOutNode = node;//node out is equal to the node.
+			ppOutParent = parent;//Parent is equal to the parameters parent.
+			return true;//Returns the function as true that it is found.
 		}
 		else
 		{
 			if (a_nSearchValue < node->GetData())
 			{
-				parent = node;
+				parent = node;//Parent is set to the nodes value.
 				if (node->HasLeft() == true)
 				{
-					node = node->GetLeft();
+					node = node->GetLeft();//Node is set to the next left value of node.
 				}
 				else
 					break;
@@ -133,7 +134,7 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 				parent = node;
 				if (node->HasRight() == true)
 				{
-					node = node->GetRight();
+					node = node->GetRight();//Node is set to the next right value of node.
 				}
 				else
 					break;
@@ -150,17 +151,24 @@ void BinaryTree::Remove(int a_nValue)
 {
 	node = nullptr;
 	parent = m_pRoot;
-
+	//If the tree is empty
 	if (IsEmpty() == true)
 	{
 		//If theres nothing within the project.
 		std::cout << "Sorry, theres nothing within the list." << std::endl;
 		return;
 	}
+
+	//Checks the program to see if the value with the node and parent exist.
 	if (FindNode(a_nValue, node, parent) == true)
 	{
+		if (!node->HasLeft() && !node->HasRight())
+		{
+			delete node;
+			return;
+		}
 
-		if (parent->GetLeft() == node)
+		else if (parent->GetLeft() == node)
 		{
 			parent->SetLeft(nullptr);
 			if (!node->HasLeft() && !node->HasRight())
@@ -170,7 +178,7 @@ void BinaryTree::Remove(int a_nValue)
 			}
 			
 			TreeNode* tempNode = node->GetRight();
-			TreeNode* tempofTempNode = tempNode;
+			TreeNode* tempofTempNode = node->GetRight();
 			while (node->HasRight())
 			{
 
@@ -188,16 +196,19 @@ void BinaryTree::Remove(int a_nValue)
 			delete node;
 
 		}
+		//if the parent's deleted value is on the right.
 		else if (parent->GetRight() == node)
 		{
+			//The link between the node and the parent becomes nullptr.
 			parent->SetRight(nullptr);
+
 			if (!node->HasLeft() && !node->HasRight())
 			{
 				delete node;
 				return;
 			}
 			TreeNode* tempNode = node->GetRight();
-			TreeNode* tempofTempNode = tempNode;
+			TreeNode* tempofTempNode = node->GetRight();
 			while (node->HasRight())
 			{
 				if (tempNode->GetLeft() == nullptr)
