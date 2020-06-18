@@ -34,49 +34,59 @@ bool BinaryTree::IsEmpty() const
 // Smaller elements are placed to the left, larger onces are placed to the right.
 void BinaryTree::Insert(int a_nValue)
 {
-
+	//The current value is now the root of the tree.
 	TreeNode* pCurrent = m_pRoot;
-	//TreeNode* pParent = nullptr;
+	//The new node will be the pointer value of the treenode.
 	TreeNode* newNode = new TreeNode(a_nValue);
 
-
+	//If theres nothing in the tree
 	if (IsEmpty() == true)
 	{
-		m_pRoot = newNode;
+		m_pRoot = newNode; //The new node is now the root.
 		return;
 	}
+	//If the current node is not null.
 	while (pCurrent != nullptr)
 	{
-
+		//If the newNode's value is less than the current nodes data.
 		if (newNode->GetData() < pCurrent->GetData())
 		{
+			//If the Current node has a left.
 			if (!pCurrent->HasLeft())
 			{
 				break;
 			}
+			//Continues through the loop.
 			pCurrent = pCurrent->GetLeft();
 		}
+		//If the newNode is larger than the current Nodes data.
 		else if (newNode->GetData() > pCurrent->GetData())
 		{
+			//If the current node has a right.
 			if (!pCurrent->HasRight())
 			{
 				break;
 			}
+			//Continues through the loop.
 			pCurrent = pCurrent->GetRight();
 		}
+		//If the value of the new node is equal to the currentnodes data.
 		else if (newNode->GetData() == pCurrent->GetData())
 		{
 			std::cout << "The number already exists" << std::endl;
 			break;
 		}
 	}
+	//if the newNode's data is less than the currentnodes data.
 	if (newNode->GetData() < pCurrent->GetData())
 	{
+		//Set the left of the currentnode to the newNode.
 		pCurrent->SetLeft(newNode);
 	}
-
+	
 	else
 	{
+		//The newnode will be on the right of the current node.
 		pCurrent->SetRight(newNode);
 	}
 	
@@ -110,7 +120,6 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 				if (pCurrent->HasLeft() == true)
 				{
 					pCurrent = pCurrent->GetLeft();
-					FindNode(a_nSearchValue, ppOutNode, ppOutParent);
 				}
 				else
 					break;
@@ -122,7 +131,6 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 				if (pCurrent->HasRight() == true)
 				{
 					pCurrent = pCurrent->GetRight();
-					FindNode(a_nSearchValue, ppOutNode, ppOutParent);
 				}
 				else
 					break;
