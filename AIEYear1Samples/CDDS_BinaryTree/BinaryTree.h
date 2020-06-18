@@ -37,6 +37,9 @@ private:
 
 	//The root node of the tree
 	TreeNode* m_pRoot;
+public:
+	TreeNode* parent = nullptr;
+	TreeNode* node = nullptr;
 };
 
 #endif //_BINARYTREE_H_

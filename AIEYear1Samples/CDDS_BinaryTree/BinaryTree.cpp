@@ -13,20 +13,23 @@ using namespace std;
 
 BinaryTree::BinaryTree()
 {
-    m_pRoot = nullptr;
+	m_pRoot = nullptr;
 }
 
 BinaryTree::~BinaryTree()
 {
-	while(m_pRoot)
+	while (m_pRoot)
 	{
 		Remove(m_pRoot->GetData());
 	}
+	delete node;
+	delete parent;
+
 }
 
 // Return whether the tree is empty
-bool BinaryTree::IsEmpty() const 
-{ 
+bool BinaryTree::IsEmpty() const
+{
 	return (m_pRoot == nullptr);
 }
 
@@ -83,43 +86,43 @@ void BinaryTree::Insert(int a_nValue)
 		//Set the left of the currentnode to the newNode.
 		pCurrent->SetLeft(newNode);
 	}
-	
-	else
+
+	else if (newNode->GetData() > pCurrent->GetData())
 	{
 		//The newnode will be on the right of the current node.
 		pCurrent->SetRight(newNode);
 	}
-	
+
 }
 
 TreeNode* BinaryTree::Find(int a_nValue)
 {
-	TreeNode* pCurrent = nullptr;
-	TreeNode* pParent = m_pRoot;
+	node = nullptr;
+	parent = m_pRoot;
 
-	return FindNode(a_nValue, pCurrent, pParent) ? pCurrent: nullptr;
+	return FindNode(a_nValue, node, parent) ? node : nullptr;
 }
 
 bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& ppOutParent)
 {
-	TreeNode* pCurrent = ppOutParent;
-	TreeNode* pParent = nullptr;
-	while (pCurrent != nullptr)
+	node = ppOutParent;
+	parent = nullptr;
+	while (node != nullptr)
 	{
-		if (a_nSearchValue == pCurrent->GetData())
+		if (a_nSearchValue == node->GetData())
 		{
-			ppOutNode = pCurrent;
-			ppOutParent = pParent;
+			ppOutNode = node;
+			ppOutParent = parent;
 			return true;
 		}
 		else
 		{
-			if (a_nSearchValue < pCurrent->GetData())
+			if (a_nSearchValue < node->GetData())
 			{
-				pParent = pCurrent;
-				if (pCurrent->HasLeft() == true)
+				parent = node;
+				if (node->HasLeft() == true)
 				{
-					pCurrent = pCurrent->GetLeft();
+					node = node->GetLeft();
 				}
 				else
 					break;
@@ -127,10 +130,10 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 			}
 			else
 			{
-				pParent = pCurrent;
-				if (pCurrent->HasRight() == true)
+				parent = node;
+				if (node->HasRight() == true)
 				{
-					pCurrent = pCurrent->GetRight();
+					node = node->GetRight();
 				}
 				else
 					break;
@@ -145,6 +148,73 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 
 void BinaryTree::Remove(int a_nValue)
 {
+	node = nullptr;
+	parent = m_pRoot;
+
+	if (IsEmpty() == true)
+	{
+		//If theres nothing within the project.
+		std::cout << "Sorry, theres nothing within the list." << std::endl;
+		return;
+	}
+	if (FindNode(a_nValue, node, parent) == true)
+	{
+
+		if (parent->GetLeft() == node)
+		{
+			parent->SetLeft(nullptr);
+			if (!node->HasLeft() && !node->HasRight())
+			{
+				delete node;
+				return;
+			}
+			
+			TreeNode* tempNode = node->GetRight();
+			TreeNode* tempofTempNode = tempNode;
+			while (node->HasRight())
+			{
+
+				 if (tempNode->GetLeft() == nullptr)
+				 {
+					 break;
+				 }
+				 tempNode = tempNode->GetLeft();
+			}
+			//test, trying to get the low value to come all the way to the top
+			//tempNode = node;
+			tempNode->SetLeft(node->GetLeft());
+			parent->SetLeft(tempNode);
+			tempNode->SetRight(tempofTempNode);
+			delete node;
+
+		}
+		else if (parent->GetRight() == node)
+		{
+			parent->SetRight(nullptr);
+			if (!node->HasLeft() && !node->HasRight())
+			{
+				delete node;
+				return;
+			}
+			TreeNode* tempNode = node->GetRight();
+			TreeNode* tempofTempNode = tempNode;
+			while (node->HasRight())
+			{
+				if (tempNode->GetLeft() == nullptr)
+				{
+					break;
+				}
+				tempNode = tempNode->GetLeft();
+
+			}
+			//test, trying to get the low value to come all the way to the top
+			//tempNode = node;
+			tempNode->SetLeft(node->GetLeft());
+			parent->SetRight(tempNode);
+			tempNode->SetRight(tempofTempNode);
+			delete node;
+		}
+	}
 
 }
 
@@ -161,7 +231,7 @@ void BinaryTree::PrintOrderedRecurse(TreeNode* pNode)
 
 void BinaryTree::PrintUnordered()
 {
-    PrintUnorderedRecurse(m_pRoot);
+	PrintUnorderedRecurse(m_pRoot);
 	cout << endl;
 }
 
@@ -177,7 +247,7 @@ void BinaryTree::Draw(TreeNode* selected)
 
 void BinaryTree::Draw(TreeNode* pNode, int x, int y, int horizontalSpacing, TreeNode* selected)
 {
-	
+
 	horizontalSpacing /= 2;
 
 	if (pNode)
@@ -185,7 +255,7 @@ void BinaryTree::Draw(TreeNode* pNode, int x, int y, int horizontalSpacing, Tree
 		if (pNode->HasLeft())
 		{
 			DrawLine(x, y, x - horizontalSpacing, y + 80, RED);
-			
+
 			Draw(pNode->GetLeft(), x - horizontalSpacing, y + 80, horizontalSpacing, selected);
 		}
 

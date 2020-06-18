@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
         {
             std::cout << "You are removing." << std::endl;
             // Implement the code to remove the node with value = valueBoxValue from your binary tree here! 
-            //m_binaryTree.Remove(valueBoxValue);
+            m_binaryTree.Remove(valueBoxValue);
         }
 
         // draw the binary tree
