@@ -2,15 +2,16 @@
 #include "raylib.h"
 #include <string>
 
+//Constructor
 TreeNode::TreeNode(int value) : m_value(value), m_left(nullptr), m_right(nullptr)
 {
 }
 
-
+//Deconstructor
 TreeNode::~TreeNode()
 {
 }
-
+//Draws the circles and the binary tree.
 void TreeNode::Draw(int x, int y, bool selected)
 {
 	static char buffer[10];

@@ -10,12 +10,12 @@ Date: 17/4/2015
 #include <cstdlib>
 using namespace std;
 
-
+//Construction
 BinaryTree::BinaryTree()
 {
 	m_pRoot = nullptr;
 }
-
+//Deconstruction
 BinaryTree::~BinaryTree()
 {
 	while (m_pRoot)
@@ -33,8 +33,6 @@ bool BinaryTree::IsEmpty() const
 	return (m_pRoot == nullptr);
 }
 
-// Insert a new element into the tree.
-// Smaller elements are placed to the left, larger onces are placed to the right.
 void BinaryTree::Insert(int a_nValue)
 {
 	//The current value is now the root of the tree.
@@ -95,6 +93,67 @@ void BinaryTree::Insert(int a_nValue)
 
 }
 
+void BinaryTree::Insert(TreeNode* newNode)
+{
+	//The current value is now the root of the tree.
+	TreeNode* pCurrent = m_pRoot;
+	//The new node will be the pointer value of the treenode.
+	
+
+	//If theres nothing in the tree
+	if (IsEmpty() == true)
+	{
+		m_pRoot = newNode; //The new node is now the root.
+		return;
+	}
+	//If the current node is not null.
+	while (pCurrent != nullptr)
+	{
+		//If the newNode's value is less than the current nodes data.
+		if (newNode->GetData() < pCurrent->GetData())
+		{
+			//If the Current node has a left.
+			if (!pCurrent->HasLeft())
+			{
+				break;
+			}
+			//Continues through the loop.
+			pCurrent = pCurrent->GetLeft();
+		}
+		//If the newNode is larger than the current Nodes data.
+		else if (newNode->GetData() > pCurrent->GetData())
+		{
+			//If the current node has a right.
+			if (!pCurrent->HasRight())
+			{
+				break;
+			}
+			//Continues through the loop.
+			pCurrent = pCurrent->GetRight();
+		}
+		//If the value of the new node is equal to the currentnodes data.
+		else if (newNode->GetData() == pCurrent->GetData())
+		{
+			std::cout << "The number already exists" << std::endl;
+			break;
+		}
+	}
+	//if the newNode's data is less than the currentnodes data.
+	if (newNode->GetData() < pCurrent->GetData())
+	{
+		//Set the left of the currentnode to the newNode.
+		pCurrent->SetLeft(newNode);
+	}
+
+	else if (newNode->GetData() > pCurrent->GetData())
+	{
+		//The newnode will be on the right of the current node.
+		pCurrent->SetRight(newNode);
+	}
+
+}
+
+//Finds the value within the binary tree.
 TreeNode* BinaryTree::Find(int a_nValue)
 {
 	node = nullptr;
@@ -102,7 +161,7 @@ TreeNode* BinaryTree::Find(int a_nValue)
 
 	return FindNode(a_nValue, node, parent) ? node : nullptr;
 }
-
+//Finds the node with the value and the node's location with the parent.
 bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& ppOutParent)
 {
 	//Making the node equal the parents location.
@@ -146,7 +205,7 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 
 	return false;
 }
-
+//removes the node.
 void BinaryTree::Remove(int a_nValue)
 {
 	node = nullptr;
@@ -162,93 +221,36 @@ void BinaryTree::Remove(int a_nValue)
 	//Checks the program to see if the value with the node and parent exist.
 	if (FindNode(a_nValue, node, parent) == true)
 	{
-		if (!node->HasLeft() && !node->HasRight())
+		//This is holding the values of the left and right of the node.
+		TreeNode* tempNodeLeft = node->GetLeft();
+		TreeNode* tempNodeRight = node->GetRight();
+
+		//If the parent does exist.
+		if (parent != nullptr)
 		{
-			delete node;
-			return;
+			if (parent->GetLeft() == node)//If the left of the parent is the node
+			{
+				parent->SetLeft(nullptr);//It sets the left of the node to nullptr
+			}
+			if (parent->GetRight() == node)//If the right of the parent is the node
+			{
+				parent->SetRight(nullptr);//It sets the right of the node to nullptr
+			}
 		}
-
-		else if (parent->GetLeft() == node)
+		if (node == m_pRoot)//If the parent doesnt exist and the node is the root
 		{
-			parent->SetLeft(nullptr);
-			if (!node->HasLeft() && !node->HasRight())
-			{
-				delete node;
-				return;
-			}
-			
-			TreeNode* tempNode = node->GetRight();
-			TreeNode* tempofTempNode = node->GetRight();
-			while (node->HasRight())
-			{
-
-				 if (tempNode->GetLeft() == nullptr)
-				 {
-					 break;
-				 }
-				 tempNode = tempNode->GetLeft();
-			}
-			//test, trying to get the low value to come all the way to the top
-			//tempNode = node;
-			tempNode->SetLeft(node->GetLeft());
-			parent->SetLeft(tempNode);
-			tempNode->SetRight(tempofTempNode);
-			delete node;
+			m_pRoot = nullptr;//The root will now be a nullptr
+		}
+		if (tempNodeLeft != nullptr)//if the temp node to the left does not equal to nullptr
+		{
+			Insert(tempNodeLeft);//It will activate the insert function
 
 		}
-		//if the parent's deleted value is on the right.
-		else if (parent->GetRight() == node)
+		if (tempNodeRight != nullptr)//if the temp node to the right does not equal to nullptr
 		{
-			//The link between the node and the parent becomes nullptr.
-			parent->SetRight(nullptr);
-
-			if (!node->HasLeft() && !node->HasRight())
-			{
-				delete node;
-				return;
-			}
-			TreeNode* tempNode = node->GetRight();
-			TreeNode* tempofTempNode = node->GetRight();
-			while (node->HasRight())
-			{
-				if (tempNode->GetLeft() == nullptr)
-				{
-					break;
-				}
-				tempNode = tempNode->GetLeft();
-
-			}
-			//test, trying to get the low value to come all the way to the top
-			//tempNode = node;
-			tempNode->SetLeft(node->GetLeft());
-			parent->SetRight(tempNode);
-			tempNode->SetRight(tempofTempNode);
-			delete node;
+			Insert(tempNodeRight);//It will activate the insert function
 		}
 	}
-
-}
-
-void BinaryTree::PrintOrdered()
-{
-	PrintOrderedRecurse(m_pRoot);
-	cout << endl;
-}
-
-void BinaryTree::PrintOrderedRecurse(TreeNode* pNode)
-{
-
-}
-
-void BinaryTree::PrintUnordered()
-{
-	PrintUnorderedRecurse(m_pRoot);
-	cout << endl;
-}
-
-void BinaryTree::PrintUnorderedRecurse(TreeNode* pNode)
-{
-
 }
 
 void BinaryTree::Draw(TreeNode* selected)
